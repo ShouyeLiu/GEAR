@@ -54,6 +54,7 @@ public class SimulationQTCommandImpl extends CommandImpl
 		{
 			writeFile();
 		}
+		Logger.printUserLog("End.");
 
 	}
 	

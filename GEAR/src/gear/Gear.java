@@ -37,7 +37,6 @@ public enum Gear
 	
 	private Gear()
 	{
-		// hello, git!
 		addCommand(new gear.subcommands.bluppca.BlupPcaCommand());
 		addCommand(new gear.subcommands.dnafingerprint.DFPCommand());
 		addCommand(new gear.subcommands.he.assocpower.HEAssocPowerCommand());
