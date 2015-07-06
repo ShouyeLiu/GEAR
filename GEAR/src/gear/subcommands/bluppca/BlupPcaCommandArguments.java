@@ -56,11 +56,11 @@ public class BlupPcaCommandArguments extends CommandArguments
 	{
 		return pheFile;
 	}
-	
+
 	public void setPhenotypeFile(String pheFile)
 	{
 		this.pheFile = pheFile;
 	}
-	
+
 	private String pheFile;
 }

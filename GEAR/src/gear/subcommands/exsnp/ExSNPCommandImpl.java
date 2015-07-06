@@ -12,6 +12,7 @@ import gear.util.BufferedReader;
 import gear.util.FileUtil;
 import gear.util.Logger;
 import gear.util.NewIt;
+import gear.util.SNPMatch;
 
 public class ExSNPCommandImpl  extends CommandImpl
 {
@@ -40,6 +41,10 @@ public class ExSNPCommandImpl  extends CommandImpl
 					{
 						SNP snp = new SNP(tokens[0], tokens[1], Float.parseFloat(tokens[2]), Integer.parseInt(tokens[3]), tokens[4].charAt(0), tokens[5].charAt(0));
 						snpInfo.add(snp);
+					}
+					if (!SNPMatch.isBiallelic(tokens[4].charAt(0), tokens[5].charAt(0)))
+					{
+						continue;
 					}
 					if (snpCnt.containsKey(tokens[1]))
 					{
