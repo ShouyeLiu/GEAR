@@ -16,10 +16,11 @@ public class EigenGWASCommand extends Command
 	{
 		addAlias("egwas");
 	}
+
 	@Override
 	public String getName()
 	{
-		return "eigenGWAS";
+		return "eigengwas";
 	}
 
 	@Override
@@ -35,6 +36,7 @@ public class EigenGWASCommand extends Command
 		options.addOption(OptionBuilder.withDescription(OPT_BFILE_DESC).withLongOpt(OPT_BFILE_LONG).hasArg().isRequired().create());
 		options.addOption(OptionBuilder.withDescription(OPT_PHE_DESC).withLongOpt(OPT_PHE_LONG).hasArg().isRequired().create());
 		options.addOption(OptionBuilder.withDescription(OPT_MPHE_DESC).withLongOpt(OPT_MPHE_LONG).hasArg().create());
+		options.addOption(OptionBuilder.withDescription(OPT_CHR_DESC).hasArg().create(OPT_CHR));
 	}
 
 	@Override
@@ -42,7 +44,7 @@ public class EigenGWASCommand extends Command
 	{
 		EigenGWASArguments eigenArgs = new EigenGWASArguments();
 		parseFileArguments(eigenArgs, cmdLine);
-		eigenArgs.setPhentypeIndex(parseIntOptionValue(cmdLine, OPT_MPHE_LONG, "0"));
+		eigenArgs.setPhentypeIndex(parseIntOptionValue(cmdLine, OPT_MPHE_LONG, "1"));
 		eigenArgs.setPhenotypeFile(cmdLine.getOptionValue(OPT_PHE_LONG));
 		return eigenArgs;
 	}
@@ -64,6 +66,11 @@ public class EigenGWASCommand extends Command
 
 		eigenArgs.setBFile(bfile);
 		eigenArgs.setFile(file);
+		
+		if (cmdLine.hasOption(OPT_CHR))
+		{
+			eigenArgs.setChr(cmdLine.getOptionValue(OPT_CHR));
+		}
 	}
 
 	@Override
@@ -77,5 +84,8 @@ public class EigenGWASCommand extends Command
 
 	private final static String OPT_MPHE_LONG = "mpheno";
 	private final static String OPT_MPHE_DESC = "Specify the phenotype index";
+	
+	private final static String OPT_CHR = "chr";
+	private final static String OPT_CHR_DESC = "Specify the chromosomes for analysis";
 
 }

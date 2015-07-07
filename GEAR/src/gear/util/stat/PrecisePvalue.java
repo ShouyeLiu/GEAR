@@ -1,13 +1,18 @@
 package gear.util.stat;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 import gear.util.Logger;
 
 import org.apache.commons.math.MathException;
+import org.apache.commons.math.distribution.ChiSquaredDistributionImpl;
 import org.apache.commons.math.distribution.NormalDistributionImpl;
 
 public class PrecisePvalue
 {
 	private static NormalDistributionImpl unitNormal = new NormalDistributionImpl(0, 1);
+	private static double ChiMedianConstant = 0.4549364;
 
 	public static double ZcumulativeProbability(double x)
 	{
@@ -68,6 +73,39 @@ public class PrecisePvalue
 		}
 
 		return p;
+	}
+
+	public static double getRealGC(ArrayList<Double> pArray)
+	{
+		double lambda = 1;
+		if (pArray.size() > 0)
+		{
+			ChiSquaredDistributionImpl chiDis = new ChiSquaredDistributionImpl(1);
+
+			Collections.sort(pArray);
+			double p = 0.5;
+			if (pArray.size() % 2 == 0)
+			{
+				p =1 - (pArray.get(pArray.size()/2) + pArray.get(pArray.size()/2 + 1))/2;
+			}
+			else
+			{
+				p =1 - pArray.get((pArray.size()+1)/2);
+			}
+			try
+			{
+				lambda = chiDis.inverseCumulativeProbability(p) / ChiMedianConstant;
+			}
+			catch (MathException e)
+			{
+				Logger.printUserError(e.toString());
+			}
+		}
+		else
+		{
+			Logger.printUserLog("No p values provided. Genomic control factor is set to 1.");
+		}
+		return lambda;
 	}
 
 }
