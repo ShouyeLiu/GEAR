@@ -15,7 +15,7 @@ public class GenAboutInfo {
 				"| GEAR [GEnetic Analysis Repository] version 0.7.7               |\\n" +
 				"| (C) 2013 Guo-Bo Chen, Zhi-Xiang Zhu                            |\\n";
 		
-		line =	"| SVN r" + svnRev + ", built on ";
+		line =	"| Git r" + svnRev + ", built on ";
 		line += Calendar.getInstance().getTime();
 		for (int i = width - line.length() - 1; i > 0; --i) {
 			line += " ";
@@ -48,14 +48,19 @@ public class GenAboutInfo {
 		// Read the SVN revision number
 //		Process proc = Runtime.getRuntime().exec("svnversion -version");
 		
-		Process proc = Runtime.getRuntime().exec("svnversion -n");
+		Process proc = Runtime.getRuntime().exec("git rev-list head");
 //		Process proc = Runtime.getRuntime().exec("which svnversion");
 
 //		Process proc = Runtime.getRuntime().exec("date");
 
 		BufferedReader reader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-		String svnRev = reader.readLine();
+		int cnt=0;
+		while(reader.readLine() != null)
+		{
+			cnt++;
+		}
 		// Welcome message
+		String svnRev = (new Integer(cnt)).toString();
 		String welcomeMessage = genWelcomeMessage(svnRev);
 		
 		// Write the revision number to a java source file
