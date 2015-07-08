@@ -51,6 +51,7 @@ public class EigenGWASImpl extends CommandImpl
 		double[] Y = new double[data.getNumberOfSubjects()];
 		ArrayList<Integer> pheIdx = NewIt.newArrayList();
 		ArrayList<Double> pArray = NewIt.newArrayList();
+		ArrayList<EigenGWASResult> eArray = NewIt.newArrayList();
 		double threshold = 0;
 
 		for(int subjectIdx = 0; subjectIdx < Y.length; subjectIdx++)
@@ -66,7 +67,7 @@ public class EigenGWASImpl extends CommandImpl
 		threshold /= pheIdx.size();
 
 		PrintStream eGWAS = FileUtil.CreatePrintStream(eigenArgs.getOutRoot() + ".egwas");
-		eGWAS.println("SNP\tCHR\tBP\tRefAllele\tAltAllele\tfreq\tBeta\tSE\tP\tChi\tn1\tfreq1\tn2\tfreq2\tFst");
+		eGWAS.println("SNP\tCHR\tBP\tRefAllele\tAltAllele\tfreq\tBeta\tSE\tP\tPgc\tChi\tn1\tfreq1\tn2\tfreq2\tFst");
 
 		ArrayList<SNP> snpList = mapFile.getMarkerList();
 
@@ -104,9 +105,6 @@ public class EigenGWASImpl extends CommandImpl
 			freq2 = freq2/(2*n2);
 			freq = freq/(2*N);
 
-			double fst = (n1/N*(freq1-freq)*(freq1-freq) + n2/N * (freq2-freq) * (freq2-freq))/(freq * (1-freq));
-
-			eGWAS.print(snp.getName() + "\t" + snp.getChromosome() + "\t" + snp.getPosition() + "\t" + snp.getFirstAllele() + "\t" + snp.getSecAllele()+ "\t" + freq + "\t");
 			double b = sReg.getSlope();
 			double b_se = sReg.getSlopeStdErr();
 			double z = b/b_se;
@@ -127,14 +125,27 @@ public class EigenGWASImpl extends CommandImpl
 			{
 				Logger.printUserError(e.toString());
 			}
+			
+			EigenGWASResult eRes = new EigenGWASResult(snp.getName(), snp.getChromosome(), snp.getPosition(), snp.getFirstAllele(), snp.getSecAllele(), n1, n2, N, freq, freq1, freq2, b, b_se, p);
 			pArray.add(p);
-			eGWAS.println(b + "\t" + b_se + "\t" + "\t" + p + "\t" + z * z + "\t" + n1 + "\t" + freq1 + "\t" + n2 + "\t" + freq2 + "\t" + fst);
+			eArray.add(eRes);
 		}
-		eGWAS.close();
+		
 		
 		double lambdaGC = PrecisePvalue.getRealGC(pArray);
 		Logger.printUserLog("Lambda GC is : " + lambdaGC);
+		if (lambdaGC > 0)
+		{
+			Logger.printUserLog("GC correction is implemented becaseu GC is greater than 1.");
+		}
 
+		for(int i = 0; i < eArray.size(); i++)
+		{
+			EigenGWASResult eRes = eArray.get(i);
+			eRes.SetGC(lambdaGC);
+			eGWAS.println(eRes);
+		}
+		eGWAS.close();
 	}
 
 	private EigenGWASArguments eigenArgs;
