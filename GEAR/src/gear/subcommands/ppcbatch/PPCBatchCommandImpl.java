@@ -1,5 +1,7 @@
 package gear.subcommands.ppcbatch;
 
+import java.io.File;
+
 import gear.subcommands.CommandArguments;
 import gear.subcommands.CommandImpl;
 import gear.subcommands.exsnp.ExSNPCommandArguments;
@@ -33,7 +35,12 @@ public class PPCBatchCommandImpl extends CommandImpl
 				String scoreExtract = new String(pbCmdArgs.getOutRoot() + ".comsnp");
 				profCommandArguments.setIsExtract(scoreExtract);
 			}
-			profCommandArguments.setResultFile(pbCmdArgs.getOutRoot() + "." + pbCmdArgs.getBedFiles().get(i));
+			
+			File f = new File(pbCmdArgs.getBedFiles().get(i));
+			
+//			profCommandArguments.setResultFile(pbCmdArgs.getOutRoot() + "." + pbCmdArgs.getBedFiles().get(i));
+			profCommandArguments.setResultFile(pbCmdArgs.getOutRoot() + "." + f.getName().toString());
+
 			profCommandArguments.setIsWeighted(false);
 			ProfileCommandImpl profImpl = new ProfileCommandImpl();
 			profImpl.execute(profCommandArguments);
